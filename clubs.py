@@ -1,4 +1,9 @@
 from db import get_connection
+from db import fetch_one
+
+def find_club_by_name(name):
+    sql = "SELECT id, name, city FROM clubs WHERE name = ?"
+    return fetch_one(sql, (name,))
 
 
 def add_club(name, city):

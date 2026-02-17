@@ -8,14 +8,14 @@ CREATE TABLE IF NOT EXISTS clubs (
 
 CREATE TABLE IF NOT EXISTS players (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    birth_date TEXT,
+    club_id INTEGER NOT NULL,
+    full_name TEXT NOT NULL,
+    birth_date TEXT NOT NULL,
     nationality TEXT,
-    position TEXT CHECK(position IN ('GK','DF','MF','FW')),
-    number INTEGER,
-    club_id INTEGER,
+    position TEXT NOT NULL,
+    number INTEGER NOT NULL,
     status TEXT DEFAULT 'active',
-    FOREIGN KEY (club_id) REFERENCES clubs(id)
+    FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS transfers (
@@ -80,3 +80,6 @@ CREATE TABLE IF NOT EXISTS cards (
 INSERT OR IGNORE INTO clubs (name, city) VALUES ('Левски', 'София');
 INSERT OR IGNORE INTO clubs (name, city) VALUES ('Ботев', 'Пловдив');
 INSERT OR IGNORE INTO clubs (name, city) VALUES ('Лудогорец', 'Разград');
+
+INSERT INTO players (club_id, full_name, birth_date, nationality, position, number, status)
+VALUES (1, 'Иван Петров', '1998-05-12', 'Българин', 'MF', 8, 'active');
