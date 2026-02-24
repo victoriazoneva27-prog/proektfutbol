@@ -1,6 +1,7 @@
 from db import initialize_database
 from clubs import add_club, get_all_clubs, update_club, delete_club
 from repositories.players_service import *
+
 def show_menu():
     print("\n--- FOOTBALL MANAGER ---")
     print("1. Добави клуб")
@@ -63,9 +64,6 @@ def handle_player_commands():
             print("Грешка:", e)
 
 
-# -----------------------------
-# Основно меню
-# -----------------------------
 def main():
     initialize_database()
 
@@ -104,35 +102,6 @@ def main():
         else:
             print("Невалидна опция!")
 
-from repositories.players_service import *
-
-def handle_command(command):
-
-    if command.startswith("Добави играч"):
-        parts = command.split()
-        full_name = parts[2] + " " + parts[3]
-        club_name = parts[5]
-        position = parts[7]
-        number = parts[9]
-
-        add_player(full_name, "1998-01-01", "Bulgarian", position, number, club_name)
-
-    elif command.startswith("Покажи играчи на"):
-        club_name = command.replace("Покажи играчи на ", "")
-        players = get_players_by_club(club_name)
-
-        for p in players:
-            print(p)
-
-    elif command.startswith("Смени номер на"):
-        parts = command.split()
-        full_name = parts[3] + " " + parts[4]
-        new_number = parts[6]
-        update_player_number(full_name, new_number)
-
-    elif command.startswith("Изтрий играч"):
-        full_name = command.replace("Изтрий играч ", "")
-        delete_player(full_name)
 
 if __name__ == "__main__":
     main()
