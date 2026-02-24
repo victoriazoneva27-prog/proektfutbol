@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS clubs (
 
 CREATE TABLE IF NOT EXISTS players (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    club_id INTEGER NOT NULL,
+    club_id INTEGER FOREIGN KEY (club_id) REFERENCES clubs(id) NOT NULL,
     full_name TEXT NOT NULL,
     birth_date TEXT NOT NULL,
     nationality TEXT,
@@ -16,18 +16,6 @@ CREATE TABLE IF NOT EXISTS players (
     number INTEGER NOT NULL,
     status TEXT DEFAULT 'active',
     FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS transfers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    player_id INTEGER NOT NULL,
-    from_club_id INTEGER,
-    to_club_id INTEGER NOT NULL,
-    transfer_date TEXT,
-    fee REAL,
-    FOREIGN KEY (player_id) REFERENCES players(id),
-    FOREIGN KEY (from_club_id) REFERENCES clubs(id),
-    FOREIGN KEY (to_club_id) REFERENCES clubs(id)
 );
 
 CREATE TABLE IF NOT EXISTS leagues (
@@ -75,6 +63,20 @@ CREATE TABLE IF NOT EXISTS cards (
     minute INTEGER CHECK(minute BETWEEN 1 AND 120),
     FOREIGN KEY (match_id) REFERENCES matches(id),
     FOREIGN KEY (player_id) REFERENCES players(id)
+);
+
+CREATE TABLE IF NOT EXISTS transfers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_id INTEGER NOT NULL,
+    from_club_id INTEGER,
+    to_club_id INTEGER NOT NULL,
+    transfer_date TEXT NOT NULL,
+    fee REAL,
+    note TEXT,
+
+    FOREIGN KEY (player_id) REFERENCES players(id),
+    FOREIGN KEY (from_club_id) REFERENCES clubs(id),
+    FOREIGN KEY (to_club_id) REFERENCES clubs(id)
 );
 
 INSERT OR IGNORE INTO clubs (name, city) VALUES ('Левски', 'София');
