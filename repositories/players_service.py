@@ -1,75 +1,79 @@
-from proekt_futbol.db import execute, fetch_all, fetch_one
-from proekt_futbol.clubs import find_club_by_name
+from proekt_futbol.db import get_connection
 from datetime import datetime
 
-VALID_POSITIONS = {"GK", "DF", "MF", "FW"}
+VALID_POSITIONS = ['GK', 'DF', 'MF', 'FW']
 
-
-def validate_player(position, number, birth_date):
+def add_player(full_name, birth_date, nationality, position, number, club_name):
     if position not in VALID_POSITIONS:
-        raise ValueError("Невалидна позиция. Позволени: GK, DF, MF, FW")
-
+        print("Невалидна позиция!")
+        return
     if not (1 <= int(number) <= 99):
-        raise ValueError("Номерът трябва да е между 1 и 99")
-
+        print("Невалиден номер!")
+        return
     try:
         datetime.strptime(birth_date, "%Y-%m-%d")
     except ValueError:
-        raise ValueError("Датата трябва да е във формат YYYY-MM-DD")
-
-
-
-def add_player(full_name, birth_date, nationality, position, number, club_name):
-    club = find_club_by_name(club_name)
-
-    if not club:
-        print("Клубът не съществува.")
+        print("Невалидна дата на раждане!")
         return
 
-    validate_player(position, number, birth_date)
+    conn = get_connection()
+    cursor = conn.cursor()
 
-    sql = """
-    INSERT INTO players (club_id, full_name, birth_date, nationality, position, number, status)
-    VALUES (?, ?, ?, ?, ?, ?, 'active')
-    """
+    cursor.execute("SELECT id FROM clubs WHERE name = ?", (club_name,))
+    club = cursor.fetchone()
+    if not club:
+        print(f"Клубът '{club_name}' не съществува!")
+        conn.close()
+        return
 
-    execute(sql, (club[0], full_name, birth_date, nationality, position, number))
-    print("Играчът е добавен успешно.")
+    club_id = club[0]
+
+    try:
+        cursor.execute("""
+            INSERT INTO players (full_name, birth_date, nationality, position, number, club_id)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (full_name, birth_date, nationality, position, number, club_id))
+        conn.commit()
+        print(f"Играчът {full_name} е добавен успешно в {club_name}.")
+    except Exception as e:
+        print("Грешка при добавяне:", e)
+    finally:
+        conn.close()
 
 
 def get_players_by_club(club_name):
-    club = find_club_by_name(club_name)
-
-    if not club:
-        print("Клубът не съществува.")
-        return []
-
-    sql = """
-    SELECT full_name, position, number, status
-    FROM players
-    WHERE club_id = ?
-    """
-
-    return fetch_all(sql, (club[0],))
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT full_name, position, number, status
+        FROM players
+        JOIN clubs ON players.club_id = clubs.id
+        WHERE clubs.name = ?
+    """, (club_name,))
+    players = cursor.fetchall()
+    conn.close()
+    return players
 
 
 def update_player_number(full_name, new_number):
     if not (1 <= int(new_number) <= 99):
-        print("Номерът трябва да е между 1 и 99")
+        print("Невалиден номер!")
         return
 
-    sql = "UPDATE players SET number = ? WHERE full_name = ?"
-    execute(sql, (new_number, full_name))
-    print("Номерът е обновен.")
-
-
-def update_player_status(full_name, new_status):
-    sql = "UPDATE players SET status = ? WHERE full_name = ?"
-    execute(sql, (new_status, full_name))
-    print("Статусът е обновен.")
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE players SET number = ? WHERE full_name = ?
+    """, (new_number, full_name))
+    conn.commit()
+    conn.close()
+    print(f"Номерът на {full_name} е обновен.")
 
 
 def delete_player(full_name):
-    sql = "DELETE FROM players WHERE full_name = ?"
-    execute(sql, (full_name,))
-    print("Играчът е изтрит.")
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM players WHERE full_name = ?", (full_name,))
+    conn.commit()
+    conn.close()
+    print(f"Играчът {full_name} е изтрит.")
