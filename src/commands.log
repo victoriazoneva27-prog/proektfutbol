@@ -1,0 +1,3 @@
+2026-03-25 17:02:11 | input=Покажи играчи на Левски | intent=show_players_club | params={'club_name': 'Левски'} | status=OK | result=Георги Иванов | MF | №8 | active
+Иван Петров | FW | №9 | active
+2026-03-25 17:02:37 | input=Трансфер Иван Петров от Левски в Лудогорец 2026-03-10 | intent=transfer_player | params={'player_name': 'Иван Петров', 'from_club': 'Левски', 'to_club': 'Лудогорец', 'date': '2026-03-10', 'fee': None} | status=OK | result=OK: Трансфер успешен: Иван Петров от Левски в Лудогорец на 2026-03-10.
