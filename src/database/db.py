@@ -1,25 +1,24 @@
 import sqlite3
-import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-DB_PATH = os.path.join(BASE_DIR, "football.db")
-SCHEMA_PATH = os.path.join(BASE_DIR, "schema.sql")
+class Database:
+    def __init__(self):
+        self.conn = sqlite3.connect("football.db")
+        self.conn.row_factory = sqlite3.Row
 
+    def execute(self, query, params=()):
+        cur = self.conn.cursor()
+        cur.execute(query, params)
+        self.conn.commit()
+        return cur.lastrowid
 
-def get_connection():
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute("PRAGMA foreign_keys = ON;")
-    return conn
+    def fetch_one(self, query, params=()):
+        cur = self.conn.cursor()
+        cur.execute(query, params)
+        return cur.fetchone()
 
+    def fetch_all(self, query, params=()):
+        cur = self.conn.cursor()
+        cur.execute(query, params)
+        return cur.fetchall()
 
-def initialize_database():
-    conn = get_connection()
-    try:
-        with open(SCHEMA_PATH, "r", encoding="utf-8") as f:
-            conn.executescript(f.read())
-        conn.commit()
-        print("Базата е инициализирана.")
-    except Exception as e:
-        print(f"Грешка при инициализация: {e}")
-    finally:
-        conn.close()
+db = Database()

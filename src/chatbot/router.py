@@ -1,47 +1,50 @@
-from src.services.players_service import get_players_by_club, get_club_by_name, get_player_by_name
-from src.services.transfers_service import transfer_player, list_transfers_by_player, list_transfers_by_club
+import json
+import re
+
+from src.chatbot.handlers_clubs import handle_add_club, handle_list_clubs
+from src.chatbot.handlers_matches import handle_select_match, handle_goal
 
 
-def route(intent_data):
-    intent = intent_data.get("intent")
+class Router:
+    def __init__(self):
+        self.handlers = {
+            "handle_add_club": handle_add_club,
+            "handle_list_clubs": handle_list_clubs,
+            "handle_select_match": handle_select_match,
+            "handle_goal": handle_goal
+        }
 
-    if intent == "show_players_club":
-        players = get_players_by_club(intent_data["club_name"])
+        import os
 
-        if not players:
-            return "Няма играчи за този клуб."
+        BASE_DIR = os.path.dirname(__file__)
+        path = os.path.join(BASE_DIR, "intents.json")
 
-        lines = [f"{p[0]} | {p[1]} | №{p[2]} | {p[3]}" for p in players]
-        return "\n".join(lines)
+        with open(path, encoding="utf-8") as f:
+            self.intents = json.load(f)
+            self.intents = json.load(f)
 
-    if intent == "transfer_player":
-        return transfer_player(
-            intent_data["player_name"],
-            intent_data["from_club"],
-            intent_data["to_club"],
-            intent_data["date"],
-            intent_data["fee"]
-        )
+    def route(self, text):
+        text = text.strip()
 
-    if intent == "show_transfers_auto":
-        target = intent_data["target"]
+        for intent_data in self.intents.values():
+            patterns = intent_data.get("patterns", [])
+            handler_name = intent_data.get("handler")
 
-        player = get_player_by_name(target)
-        if player:
-            transfers = list_transfers_by_player(target)
-            if not transfers:
-                return "Няма трансфери за този играч."
-            lines = [f"{t[0]} -> {t[1]} | {t[2]} | сума: {t[3]}" for t in transfers]
-            return "\n".join(lines)
+            for pattern in patterns:
+                match = re.fullmatch(pattern, text)
+                if match:
+                    handler = self.handlers.get(handler_name)
 
-        club = get_club_by_name(target)
-        if club:
-            transfers = list_transfers_by_club(target)
-            if not transfers:
-                return "Няма трансфери за този клуб."
-            lines = [f"{t[0]} | {t[1]} -> {t[2]} | {t[3]} | сума: {t[4]}" for t in transfers]
-            return "\n".join(lines)
+                    if not handler:
+                        return "Грешка: handler не съществува"
 
-        return "ERROR: Няма играч или клуб с това име."
+                    try:
+                        result = handler(match.groups())
+                        return result if result else "OK"
+                    except Exception as e:
+                        return f"Грешка: {str(e)}"
 
-    return "Неразпозната команда."
+        return "Неразпозната команда"
+
+
+router = Router()
