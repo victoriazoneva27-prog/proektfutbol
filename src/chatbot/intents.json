@@ -3,16 +3,52 @@
     "patterns": ["Добави клуб (.+)"],
     "handler": "handle_add_club"
   },
+
   "list_clubs": {
     "patterns": ["Покажи клубове"],
     "handler": "handle_list_clubs"
   },
+
   "select_match": {
     "patterns": ["Избери мач (\\d+)"],
     "handler": "handle_select_match"
   },
+
+  "result_match": {
+    "patterns": [
+      "Резултат (.+)-(.*) (\\d+):(\\d+)",
+      "(.+)-(.+) (\\d+):(\\d+) запиши"
+    ],
+    "handler": "handle_result"
+  },
+
   "goal": {
-    "patterns": ["Гол (.+) (.+) (\\d+)"],
+    "patterns": [
+      "Гол (.+) (.+) (\\d+)",
+      "(.+) гол (.+) (\\d+)"
+    ],
     "handler": "handle_goal"
+  },
+
+  "card": {
+    "patterns": [
+      "Картон (.+) (.+) ([YR]) (\\d+)"
+    ],
+    "handler": "handle_card"
+  },
+
+  "show_events": {
+    "patterns": [
+      "Покажи събития",
+      "Покажи събития (\\d+)"
+    ],
+    "handler": "handle_show_events"
+  },
+
+  "show_standings": {
+    "patterns": [
+      "Покажи класиране (.+) (\\d{4}/\\d{4})"
+    ],
+    "handler": "handle_show_standings"
   }
 }

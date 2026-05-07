@@ -1,32 +1,27 @@
-from src.repositories.matches_repo import matches_repo
-from src.repositories.clubs_repo import clubs_repo
-from src.repositories.players_repo import players_repo
+from src.repositories.matches_repo import MatchesRepo
+
+repo = MatchesRepo()
+
 
 class MatchesService:
-    def __init__(self):
-        self.current_match = None
 
-    def select_match(self, match_id):
-        m = matches_repo.get_match(match_id)
-        if not m:
-            return "Няма мач"
-        self.current_match = match_id
-        return "Избран мач"
+    def set_result(self, match_id, home, away, hg, ag):
+        repo.update_result(match_id, hg, ag)
+        return f"Записан резултат: {home}-{away} {hg}:{ag}"
 
-    def add_goal(self, player, club, minute):
-        if not self.current_match:
-            return "Няма избран мач"
+    def add_goal(self, match_id, player, club, minute):
+        repo.insert_goal(match_id, player, club, minute)
+        return f"Гол: {player} ({minute} мин)"
 
-        p = players_repo.get_by_name(player)
-        c = clubs_repo.get_by_name(club)
+    def add_card(self, match_id, player, club, card_type, minute):
+        repo.insert_card(match_id, player, club, card_type, minute)
+        return f"Картон {card_type}: {player}"
 
-        if not p or not c:
-            return "Грешка"
+    def get_events(self, match_id):
+        goals = repo.get_goals(match_id)
+        cards = repo.get_cards(match_id)
 
-        if minute < 1 or minute > 120:
-            return "Невалидна минута"
-
-        matches_repo.add_goal(self.current_match, p["id"], c["id"], minute)
-        return "Гол записан"
-
-matches_service = MatchesService()
+        return {
+            "goals": goals,
+            "cards": cards
+        }
