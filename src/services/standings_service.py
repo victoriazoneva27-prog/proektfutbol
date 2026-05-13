@@ -1,117 +1,171 @@
-from src.repositories.standings_repo import standings_repo
+from src.repositories import standings_repo
 
 
-class StandingsService:
-    def calculate_table(self, league_name, season):
-        league = standings_repo.get_league(league_name, season)
+def calculate_table(
+        league_name,
+        season
+):
 
-        if not league:
-            return 'Грешка: лигата не съществува.'
+    league = standings_repo.get_league(
+        league_name,
+        season
+    )
 
-        teams = standings_repo.get_teams(league['id'])
+    if not league:
+        return "Лигата не съществува"
 
-        if not teams:
-            return 'Грешка: няма отбори в тази лига.'
+    league_id = league[0]
 
-        table = {}
+    teams = standings_repo.get_teams(
+        league_id
+    )
 
-        for team in teams:
-            table[team['id']] = {
-                'name': team['name'],
-                'MP': 0,
-                'W': 0,
-                'D': 0,
-                'L': 0,
-                'GF': 0,
-                'GA': 0,
-                'GD': 0,
-                'PTS': 0
-            }
+    matches = standings_repo.get_matches(
+        league_id
+    )
 
-        matches = standings_repo.get_played_matches(league['id'])
+    table = {}
 
-        for match in matches:
-            home_id = match['home_club_id']
-            away_id = match['away_club_id']
+    for t in teams:
 
-            if home_id not in table or away_id not in table:
-                continue
+        table[t[0]] = {
+            "name": t[1],
+            "mp": 0,
+            "w": 0,
+            "d": 0,
+            "l": 0,
+            "gf": 0,
+            "ga": 0,
+            "gd": 0,
+            "pts": 0
+        }
 
-            hg = match['home_goals']
-            ag = match['away_goals']
+    for m in matches:
 
-            home = table[home_id]
-            away = table[away_id]
+        home = m[0]
+        away = m[1]
+        hg = m[2]
+        ag = m[3]
 
-            home['MP'] += 1
-            away['MP'] += 1
+        table[home]["mp"] += 1
+        table[away]["mp"] += 1
 
-            home['GF'] += hg
-            home['GA'] += ag
+        table[home]["gf"] += hg
+        table[home]["ga"] += ag
 
-            away['GF'] += ag
-            away['GA'] += hg
+        table[away]["gf"] += ag
+        table[away]["ga"] += hg
 
-            if hg > ag:
-                home['W'] += 1
-                away['L'] += 1
+        if hg > ag:
 
-                home['PTS'] += 3
+            table[home]["w"] += 1
+            table[away]["l"] += 1
 
-            elif ag > hg:
-                away['W'] += 1
-                home['L'] += 1
+            table[home]["pts"] += 3
 
-                away['PTS'] += 3
+        elif ag > hg:
 
-            else:
-                home['D'] += 1
-                away['D'] += 1
+            table[away]["w"] += 1
+            table[home]["l"] += 1
 
-                home['PTS'] += 1
-                away['PTS'] += 1
+            table[away]["pts"] += 3
 
-        for team_id in table:
-            team = table[team_id]
-            team['GD'] = team['GF'] - team['GA']
+        else:
 
-        standings = list(table.values())
+            table[home]["d"] += 1
+            table[away]["d"] += 1
 
-        standings.sort(
-            key=lambda x: (
-                -x['PTS'],
-                -x['GD'],
-                -x['GF'],
-                x['name']
-            )
+            table[home]["pts"] += 1
+            table[away]["pts"] += 1
+
+    for t in table.values():
+
+        t["gd"] = t["gf"] - t["ga"]
+
+    sorted_table = sorted(
+        table.values(),
+        key=lambda x: (
+            -x["pts"],
+            -x["gd"],
+            -x["gf"],
+            x["name"]
+        )
+    )
+
+    text = ""
+
+    pos = 1
+
+    for t in sorted_table:
+
+        text += (
+            f"{pos}. "
+            f"{t['name']} | "
+            f"MP:{t['mp']} "
+            f"W:{t['w']} "
+            f"D:{t['d']} "
+            f"L:{t['l']} "
+            f"GF:{t['gf']} "
+            f"GA:{t['ga']} "
+            f"GD:{t['gd']} "
+            f"PTS:{t['pts']}\n"
         )
 
-        lines = []
-        lines.append(
-            'POS TEAM MP W D L GF GA GD PTS'
+        pos += 1
+
+    return text
+
+
+def refresh_table(
+        league_name,
+        season
+):
+
+    return calculate_table(
+        league_name,
+        season
+    )
+
+
+def top_scorers(
+        league_name,
+        season
+):
+
+    scorers = standings_repo.get_top_scorers(
+        league_name,
+        season
+    )
+
+    text = ""
+
+    for s in scorers:
+
+        text += (
+            f"{s[0]} - "
+            f"{s[1]} гола\n"
         )
 
-        pos = 1
-
-        for team in standings:
-            line = (
-                str(pos) + '. ' +
-                team['name'] + ' ' +
-                str(team['MP']) + ' ' +
-                str(team['W']) + ' ' +
-                str(team['D']) + ' ' +
-                str(team['L']) + ' ' +
-                str(team['GF']) + ':' +
-                str(team['GA']) + ' ' +
-                str(team['GD']) + ' ' +
-                str(team['PTS'])
-            )
-
-            lines.append(line)
-
-            pos += 1
-
-        return '\n'.join(lines)
+    return text
 
 
-standings_service = StandingsService()
+def best_attack(
+        league_name,
+        season
+):
+
+    return standings_repo.best_attack(
+        league_name,
+        season
+    )
+
+
+def best_defense(
+        league_name,
+        season
+):
+
+    return standings_repo.best_defense(
+        league_name,
+        season
+    )

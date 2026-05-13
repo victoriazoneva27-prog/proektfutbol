@@ -1,36 +1,65 @@
-from src.repositories.clubs_repo import clubs_repo
+from src.repositories import clubs_repo
 
 
-class ClubsService:
-    def add_club(self, name):
-        if not name:
-            return "Грешка: празно име"
+def add_club(name):
 
-        existing = clubs_repo.get_by_name(name)
-        if existing:
-            return "Грешка: клубът вече съществува"
+    if not name:
+        return "Невалидно име"
 
-        clubs_repo.create(name)
-        return "Клуб добавен"
+    club = clubs_repo.get_club_by_name(name)
 
-    def list_clubs(self):
-        clubs = clubs_repo.get_all()
-        if not clubs:
-            return "Няма клубове"
+    if club:
+        return "Клубът вече съществува"
 
-        result = []
-        for c in clubs:
-            result.append(c["name"])
+    clubs_repo.add_club(name)
 
-        return "\n".join(result)
-
-    def delete_club(self, name):
-        club = clubs_repo.get_by_name(name)
-        if not club:
-            return "Няма такъв клуб"
-
-        clubs_repo.delete(club["id"])
-        return "Клуб изтрит"
+    return "Клубът е добавен"
 
 
-clubs_service = ClubsService()
+def list_clubs():
+
+    clubs = clubs_repo.get_all_clubs()
+
+    if not clubs:
+        return "Няма клубове"
+
+    text = ""
+
+    for club in clubs:
+        text += f"{club[0]}. {club[1]}\n"
+
+    return text
+
+
+def delete_club(name):
+
+    club = clubs_repo.get_club_by_name(name)
+
+    if not club:
+        return "Клубът не съществува"
+
+    clubs_repo.delete_club(name)
+
+    return "Клубът е изтрит"
+
+
+def update_club(old_name, new_name):
+
+    club = clubs_repo.get_club_by_name(old_name)
+
+    if not club:
+        return "Клубът не съществува"
+
+    clubs_repo.update_club(old_name, new_name)
+
+    return "Клубът е редактиран"
+
+
+def find_club(name):
+
+    club = clubs_repo.get_club_by_name(name)
+
+    if not club:
+        return "Клубът не съществува"
+
+    return f"{club[0]} - {club[1]}"

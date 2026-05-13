@@ -1,23 +1,221 @@
 {
+  "help": {
+    "patterns": [
+      "Помощ",
+      "help",
+      "Какво можеш",
+      "Команди"
+    ],
+    "handler": "handle_help"
+  },
+
+  "exit": {
+    "patterns": [
+      "Изход",
+      "Край",
+      "exit",
+      "quit"
+    ],
+    "handler": "handle_exit"
+  },
+
   "add_club": {
-    "patterns": ["Добави клуб (.+)"],
+    "patterns": [
+      "Добави клуб (.+)",
+      "Създай клуб (.+)",
+      "Нов клуб (.+)"
+    ],
     "handler": "handle_add_club"
   },
 
   "list_clubs": {
-    "patterns": ["Покажи клубове"],
+    "patterns": [
+      "Покажи клубове",
+      "Покажи всички клубове",
+      "Списък клубове",
+      "Всички клубове",
+      "Клубове"
+    ],
     "handler": "handle_list_clubs"
   },
 
+  "delete_club": {
+    "patterns": [
+      "Изтрий клуб (.+)",
+      "Премахни клуб (.+)"
+    ],
+    "handler": "handle_delete_club"
+  },
+
+  "update_club": {
+    "patterns": [
+      "Редактирай клуб (.+) (.+)",
+      "Преименувай клуб (.+) на (.+)"
+    ],
+    "handler": "handle_update_club"
+  },
+
+  "add_player": {
+    "patterns": [
+      "Добави играч (.+) в (.+) позиция (GK|DF|MF|FW) номер (\\d+)",
+      "Нов играч (.+) в (.+) позиция (GK|DF|MF|FW) номер (\\d+)"
+    ],
+    "handler": "handle_add_player"
+  },
+
+  "list_players": {
+    "patterns": [
+      "Покажи играчи",
+      "Покажи всички играчи",
+      "Всички играчи",
+      "Списък играчи"
+    ],
+    "handler": "handle_list_players"
+  },
+
+  "list_players_by_club": {
+    "patterns": [
+      "Покажи играчи на (.+)",
+      "Играчите на (.+)",
+      "Състав на (.+)"
+    ],
+    "handler": "handle_list_players_by_club"
+  },
+
+  "delete_player": {
+    "patterns": [
+      "Изтрий играч (.+)",
+      "Премахни играч (.+)"
+    ],
+    "handler": "handle_delete_player"
+  },
+
+  "change_number": {
+    "patterns": [
+      "Смени номер на (.+) на (\\d+)",
+      "Промени номер на (.+) на (\\d+)"
+    ],
+    "handler": "handle_change_number"
+  },
+
+  "change_position": {
+    "patterns": [
+      "Смени позиция на (.+) на (GK|DF|MF|FW)",
+      "Промени позиция на (.+) на (GK|DF|MF|FW)"
+    ],
+    "handler": "handle_change_position"
+  },
+
+  "change_status": {
+    "patterns": [
+      "Смени статус на (.+) на (.+)",
+      "Промени статус на (.+) на (.+)"
+    ],
+    "handler": "handle_change_status"
+  },
+
+  "transfer_player": {
+    "patterns": [
+      "Трансфер (.+) от (.+) в (.+) (\\d{4}-\\d{2}-\\d{2})",
+      "Трансфер на (.+) от (.+) в (.+) (\\d{4}-\\d{2}-\\d{2})",
+      "Премести (.+) от (.+) в (.+) (\\d{4}-\\d{2}-\\d{2})"
+    ],
+    "handler": "handle_transfer_player"
+  },
+
+  "transfer_player_fee": {
+    "patterns": [
+      "Трансфер (.+) от (.+) в (.+) (\\d{4}-\\d{2}-\\d{2}) сума (\\d+)"
+    ],
+    "handler": "handle_transfer_player_fee"
+  },
+
+  "show_transfers_player": {
+    "patterns": [
+      "Покажи трансфери на (.+)",
+      "История на трансфери на (.+)"
+    ],
+    "handler": "handle_show_transfers_player"
+  },
+
+  "show_transfers_club": {
+    "patterns": [
+      "Покажи трансфери на клуб (.+)",
+      "Трансфери на клуб (.+)"
+    ],
+    "handler": "handle_show_transfers_club"
+  },
+
+  "create_league": {
+    "patterns": [
+      "Създай лига (.+) (\\d{4}/\\d{4})",
+      "Нова лига (.+) (\\d{4}/\\d{4})"
+    ],
+    "handler": "handle_create_league"
+  },
+
+  "list_leagues": {
+    "patterns": [
+      "Покажи лиги",
+      "Всички лиги",
+      "Списък лиги"
+    ],
+    "handler": "handle_list_leagues"
+  },
+
+  "add_team_to_league": {
+    "patterns": [
+      "Добави отбор (.+) в лига (.+) (\\d{4}/\\d{4})",
+      "Запиши (.+) в лига (.+) (\\d{4}/\\d{4})"
+    ],
+    "handler": "handle_add_team_to_league"
+  },
+
+  "remove_team_from_league": {
+    "patterns": [
+      "Премахни отбор (.+) от лига (.+) (\\d{4}/\\d{4})",
+      "Изтрий отбор (.+) от лига (.+) (\\d{4}/\\d{4})"
+    ],
+    "handler": "handle_remove_team_from_league"
+  },
+
+  "show_league_teams": {
+    "patterns": [
+      "Покажи отбори в лига (.+) (\\d{4}/\\d{4})",
+      "Отбори в лига (.+) (\\d{4}/\\d{4})"
+    ],
+    "handler": "handle_show_league_teams"
+  },
+
+  "generate_schedule": {
+    "patterns": [
+      "Генерирай програма (.+) (\\d{4}/\\d{4})",
+      "Направи програма (.+) (\\d{4}/\\d{4})"
+    ],
+    "handler": "handle_generate_schedule"
+  },
+
+  "show_round": {
+    "patterns": [
+      "Покажи кръг (\\d+) (.+) (\\d{4}/\\d{4})",
+      "Мачове от кръг (\\d+) (.+) (\\d{4}/\\d{4})"
+    ],
+    "handler": "handle_show_round"
+  },
+
   "select_match": {
-    "patterns": ["Избери мач (\\d+)"],
+    "patterns": [
+      "Избери мач (\\d+)",
+      "Отвори мач (\\d+)"
+    ],
     "handler": "handle_select_match"
   },
 
   "result_match": {
     "patterns": [
-      "Резултат (.+)-(.*) (\\d+):(\\d+)",
-      "(.+)-(.+) (\\d+):(\\d+) запиши"
+      "Резултат (.+)-(.+) (\\d+):(\\d+)",
+      "Запиши резултат (.+)-(.+) (\\d+):(\\d+)",
+      "Краен резултат (.+)-(.+) (\\d+):(\\d+)"
     ],
     "handler": "handle_result"
   },
@@ -25,30 +223,79 @@
   "goal": {
     "patterns": [
       "Гол (.+) (.+) (\\d+)",
-      "(.+) гол (.+) (\\d+)"
+      "Гол на (.+) за (.+) (\\d+)",
+      "Попадение (.+) (.+) (\\d+)"
     ],
     "handler": "handle_goal"
   },
 
+  "own_goal": {
+    "patterns": [
+      "Автогол (.+) (.+) (\\d+)"
+    ],
+    "handler": "handle_own_goal"
+  },
+
   "card": {
     "patterns": [
-      "Картон (.+) (.+) ([YR]) (\\d+)"
+      "Картон (.+) (.+) ([YR]) (\\d+)",
+      "Картон на (.+) (.+) ([YR]) (\\d+)"
     ],
     "handler": "handle_card"
+  },
+
+  "yellow_card": {
+    "patterns": [
+      "Жълт картон (.+) (.+) (\\d+)"
+    ],
+    "handler": "handle_yellow_card"
+  },
+
+  "red_card": {
+    "patterns": [
+      "Червен картон (.+) (.+) (\\d+)"
+    ],
+    "handler": "handle_red_card"
   },
 
   "show_events": {
     "patterns": [
       "Покажи събития",
-      "Покажи събития (\\d+)"
+      "Събития",
+      "Покажи събития на мача"
     ],
     "handler": "handle_show_events"
   },
 
+  "show_match": {
+    "patterns": [
+      "Покажи мач (\\d+)"
+    ],
+    "handler": "handle_show_match"
+  },
+
+  "show_matches": {
+    "patterns": [
+      "Покажи мачове",
+      "Всички мачове"
+    ],
+    "handler": "handle_show_matches"
+  },
+
   "show_standings": {
     "patterns": [
-      "Покажи класиране (.+) (\\d{4}/\\d{4})"
+      "Покажи класиране (.+?) (\\d{4}/\\d{4})",
+      "Класиране (.+?) (\\d{4}/\\d{4})",
+      "Таблица (.+?) (\\d{4}/\\d{4})"
     ],
     "handler": "handle_show_standings"
+  },
+
+  "refresh_standings": {
+    "patterns": [
+      "Обнови класиране",
+      "Преизчисли класиране"
+    ],
+    "handler": "handle_refresh_standings"
   }
 }

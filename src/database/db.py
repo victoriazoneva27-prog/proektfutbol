@@ -1,24 +1,46 @@
 import sqlite3
 
-class Database:
-    def __init__(self):
-        self.conn = sqlite3.connect("football.db")
-        self.conn.row_factory = sqlite3.Row
+DB_NAME = "football.db"
 
-    def execute(self, query, params=()):
-        cur = self.conn.cursor()
-        cur.execute(query, params)
-        self.conn.commit()
-        return cur.lastrowid
 
-    def fetch_one(self, query, params=()):
-        cur = self.conn.cursor()
-        cur.execute(query, params)
-        return cur.fetchone()
+def get_connection():
+    return sqlite3.connect(DB_NAME)
 
-    def fetch_all(self, query, params=()):
-        cur = self.conn.cursor()
-        cur.execute(query, params)
-        return cur.fetchall()
 
-db = Database()
+def execute(query, params=()):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(query, params)
+
+    conn.commit()
+    conn.close()
+
+
+def fetch_all(query, params=()):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(query, params)
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return rows
+
+
+def fetch_one(query, params=()):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(query, params)
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    return row

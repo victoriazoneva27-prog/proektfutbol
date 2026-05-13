@@ -1,46 +1,96 @@
-from src.services.match_context import MatchContext
-from src.services.matches_service import MatchesService
+from src.services import matches_service
 
-service = MatchesService()
+
+CURRENT_MATCH = None
 
 
 def handle_select_match(match_id):
-    MatchContext.set_match(int(match_id))
+
+    global CURRENT_MATCH
+
+    CURRENT_MATCH = int(match_id)
+
     return f"Избран мач {match_id}"
 
 
-def handle_result(home, away, hg, ag):
-    match_id = MatchContext.get_match()
+def handle_result(
+        home,
+        away,
+        home_goals,
+        away_goals
+):
 
-    if not match_id:
+    global CURRENT_MATCH
+
+    if CURRENT_MATCH is None:
         return "Няма избран мач"
 
-    return service.set_result(match_id, home, away, int(hg), int(ag))
+    return matches_service.set_result(
+        CURRENT_MATCH,
+        int(home_goals),
+        int(away_goals)
+    )
 
 
-def handle_goal(player_name, club_name, minute):
-    match_id = MatchContext.get_match()
+def handle_goal(
+        player_name,
+        club_name,
+        minute
+):
 
-    if not match_id:
+    global CURRENT_MATCH
+
+    if CURRENT_MATCH is None:
         return "Няма избран мач"
 
-    return service.add_goal(match_id, player_name, club_name, int(minute))
+    return matches_service.add_goal(
+        CURRENT_MATCH,
+        player_name.strip(),
+        club_name.strip(),
+        int(minute)
+    )
 
 
-def handle_card(player_name, club_name, card_type, minute):
-    match_id = MatchContext.get_match()
+def handle_card(
+        player_name,
+        club_name,
+        card_type,
+        minute
+):
 
-    if not match_id:
+    global CURRENT_MATCH
+
+    if CURRENT_MATCH is None:
         return "Няма избран мач"
 
-    return service.add_card(match_id, player_name, club_name, card_type, int(minute))
+    return matches_service.add_card(
+        CURRENT_MATCH,
+        player_name.strip(),
+        club_name.strip(),
+        card_type.strip().upper(),
+        int(minute)
+    )
 
 
-def handle_show_events(match_id=None):
-    if not match_id:
-        match_id = MatchContext.get_match()
+def handle_show_events():
 
-    if not match_id:
+    global CURRENT_MATCH
+
+    if CURRENT_MATCH is None:
         return "Няма избран мач"
 
-    return service.get_events(match_id)
+    return matches_service.show_events(
+        CURRENT_MATCH
+    )
+
+
+def handle_show_match(match_id):
+
+    return matches_service.show_match(
+        int(match_id)
+    )
+
+
+def handle_show_results():
+
+    return matches_service.show_results()
